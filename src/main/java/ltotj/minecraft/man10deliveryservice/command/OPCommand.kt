@@ -58,18 +58,18 @@ object OPCommand:CommandExecutor,TabCompleter {
             sender.sendMessage("§4権限なし")
             return true
         }
-        else if(args.isEmpty()){
-            sender.sendMessage("使い方をここに入力")
+        if(args.isEmpty()){
+            sender.performCommand("mdop help")
             return true
         }
         when(args[0]){
             "help"->{
-                sender.sendMessage(arrayOf("§e/mdop banitem ->手に持ったアイテムを発送禁止リストに追加します §4※Material指定です"
+                sender.sendMessage(arrayOf("§6==========§e[$pluginTitle]§6===========","§e/mdop banitem ->手に持ったアイテムを発送禁止リストに追加します §4※Material指定です"
                         ,"§e/mdop unbanitem ->手に持ったアイテムを発送禁止リストから削除します §4※Material指定です"
                         ,"§e/mdop on ->${pluginTitle}を利用可能にします","§e/mdop on ->${pluginTitle}を利用不可にします"
                         ,"§e/mdop adminbox オーダーID ->指定されたオーダーIDのアドミン専用ボックスを取得します"
                         ,"§e/mdop log <send,receive> <対象者> (ページ数) ->対象者の発送/受け取りログを表示します"
-                        ,"§e/mdop reload ->コンフィグをリロードします"))
+                        ,"§e/mdop reload ->コンフィグをリロードします","§6========================================"))
             }
             "reload"->{
                 plugin.reloadConfig()
