@@ -85,7 +85,7 @@ object DeliveryOrder: Listener {
         for(i in invSize-9 until invSize)inv.setItem(i, ItemStack(Material.WHITE_STAINED_GLASS_PANE))
         for(i in 0 until invSize/9)inv.setItem(i*9+8,ItemStack(Material.WHITE_STAINED_GLASS_PANE))
         for(i in 0 until min(wrappingList.size,invSize-(invSize/9 +1))){
-            val item=createGUIItem(Material.valueOf(con.getString("itemBox.${wrappingList.elementAt(i)}.material")!!), 1, con.getString("itemBox.${wrappingList.elementAt(i)}.displayName")!!, listOf("§e追加料金：§4${getYenString(con.getDouble("itemBox.${wrappingList.elementAt(i)}.price"))}", "§eクリックで選択"))
+            val item=createGUIItem(Material.valueOf(con.getString("itemBox.${wrappingList.elementAt(i)}.material")?:"CHEST"), 1, con.getString("itemBox.${wrappingList.elementAt(i)}.displayName")?:"ITEMBOX", listOf("§e追加料金：§4${getYenString(con.getDouble("itemBox.${wrappingList.elementAt(i)}.price"))}", "§eクリックで選択"))
             setNBTString(item, "wrapping", wrappingList.elementAt(i))
             val meta=item.itemMeta
             meta.setCustomModelData(con.getInt("itemBox.${wrappingList.elementAt(i)}.customModelData"))
