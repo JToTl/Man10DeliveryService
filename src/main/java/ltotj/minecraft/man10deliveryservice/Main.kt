@@ -53,6 +53,7 @@ class Main : JavaPlugin(){
         getCommand("mdlog")!!.setExecutor(LogCommand)
         getCommand("mletter")!!.setExecutor(LetterCommand)
         getCommand("mdop")!!.setExecutor(OPCommand)
+        getCommand("mdhelp")!!.setExecutor(HelpCommand)
     }
 
     override fun onDisable() {
