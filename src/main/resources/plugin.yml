@@ -18,5 +18,7 @@ commands:
 permissions:
   mdelivery.admin:
       default: op
+      children:
+        mdelivery.player: true
   mdelivery.player:
-      default: true
+      default: op
