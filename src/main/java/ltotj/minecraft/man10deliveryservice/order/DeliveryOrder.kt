@@ -236,7 +236,7 @@ object DeliveryOrder: Listener {
                 mysql.close()
                 return@execute
             }
-            else if(dateResult.next()) {
+            if(dateResult.next()) {
                 val lastTime=dateResult.getString("order_date")
                 Bukkit.getScheduler().runTask(plugin, Runnable {
                     playerLastSendingData[e.player.uniqueId] = lastTime

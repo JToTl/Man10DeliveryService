@@ -40,9 +40,15 @@ object ItemBox: Listener {
                 result.next()
                 if(result.row==0){
                     e.player.sendMessage("§4アイテムボックスのデータが見つかりませんでした")
+                    result.close()
+                    mysql.close()
+                    return@execute
                 }
-                else if(countAirPocket(e.player.inventory)<result.getInt("amount")){
+                if(countAirPocket(e.player.inventory)<result.getInt("amount")){
                     e.player.sendMessage("§4インベントリに§d${countAirPocket(e.player.inventory)}個§4の空きを作ってください")
+                    result.close()
+                    mysql.close()
+                    return@execute
                 }
                 else{
                     for(i in 1..8){
@@ -56,6 +62,7 @@ object ItemBox: Listener {
                 mysql.close()
                 return@execute
             }
+            return
         }
         if(!Main.available){
             e.player.sendMessage("§4[${Main.pluginTitle}]はただいま停止中です")
@@ -69,16 +76,28 @@ object ItemBox: Listener {
                 result.next()
                 if(result.row==0){
                     e.player.sendMessage("§4アイテムボックスが見つかりませんでした")
+                    result.close()
+                    mysql.close()
+                    boxOpeningList.remove(e.player.uniqueId)
+                    return@execute
                 }
-                else if(result.getBoolean("box_status")){
+                if(result.getBoolean("box_status")){
                     e.player.sendMessage("§4既に開封されたボックスです")
                     println("§4${e.player.name}が開封済みのボックスを所持していました：order_id-$order_id")
                     e.player.inventory.remove(item)
+                    result.close()
+                    mysql.close()
+                    boxOpeningList.remove(e.player.uniqueId)
+                    return@execute
                 }
-                else if(countAirPocket(e.player.inventory)<result.getInt("amount")){
+                if(countAirPocket(e.player.inventory)<result.getInt("amount")){
                     e.player.sendMessage("§4インベントリがいっぱいです §d${countAirPocket(e.player.inventory)}個§4の空きを作って再度開けてください")
+                    result.close()
+                    mysql.close()
+                    boxOpeningList.remove(e.player.uniqueId)
+                    return@execute
                 }
-                else if(Bukkit.getPlayer(e.player.uniqueId)!=null) {
+                if(Bukkit.getPlayer(e.player.uniqueId)!=null) {
                     if (mysql.execute("update delivery_order set box_status=true,opener_name='${e.player.name}',opener_uuid='${e.player.uniqueId}',opened_date='${getDateForMySQL(Date())}' where order_id=$order_id;")) {
                         e.player.inventory.remove(item)
                         for (i in 1..8) {
@@ -91,10 +110,11 @@ object ItemBox: Listener {
                     } else {
                         e.player.sendMessage("§4ボックスを開封できませんでした")
                     }
+                    result.close()
+                    mysql.close()
+                    boxOpeningList.remove(e.player.uniqueId)
+                    return@execute
                 }
-                result.close()
-                mysql.close()
-                boxOpeningList.remove(e.player.uniqueId)
             }
         }
     }
