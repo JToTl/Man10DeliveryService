@@ -78,7 +78,7 @@ object LogCommand:CommandExecutor,TabCompleter {
             "receive" -> {
                 val page = if (args.size == 1) 1 else args[1].toIntOrNull() ?: 1
                 executor.execute {
-                    val result = mysql.query("select order_id,sender_name,order_status,receive_date from delivery_order where sender_uuid='${sender.uniqueId}' order by order_id desc limit 11 offset ${(page - 1) * 10};")
+                    val result = mysql.query("select order_id,sender_name,order_status,receive_date from delivery_order where receiver_uuid='${sender.uniqueId}' order by order_id desc limit 11 offset ${(page - 1) * 10};")
                             ?: return@execute
                     result.next()
                     if (result.row == 0) {

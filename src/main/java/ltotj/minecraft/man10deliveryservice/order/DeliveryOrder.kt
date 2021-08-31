@@ -120,11 +120,11 @@ object DeliveryOrder: Listener {
     fun containerClickEvent(e:InventoryClickEvent){
         if(e.view.title()!= Component.text(Main.containerGUIName)||e.clickedInventory?.size!=9)return
         else if(e.slot==8){
+            e.isCancelled=true
             if(!Main.available){
                 e.whoClicked.sendMessage("§4[${Main.pluginTitle}]はただいま停止中です")
                 return
             }
-            e.isCancelled=true
             val container=e.clickedInventory?.contents?.clone()?:return
             var count=0
             for(i in 0 until 8){
@@ -253,7 +253,7 @@ object DeliveryOrder: Listener {
 
     @EventHandler
     fun containerCloseEvent(e: InventoryCloseEvent){
-        if(e.view.title()!= Component.text(Main.containerGUIName))return
+        if(e.view.title()!= Component.text(Main.containerGUIName)||e.inventory.size!=9||e.inventory.getItem(8)?.itemMeta?.displayName()!=Component.text("§f§lアイテムを送る"))return
         returnItem(e.player as Player,e.inventory.contents)
     }
 
