@@ -75,16 +75,15 @@ object OPCommand:CommandExecutor {
                     sender.sendMessage("${sender.inventory.itemInMainHand.type} を発送禁止リストから削除しました")
                 }
             }
-            "switch"->{
-                available=!available
-                plugin.config.set("enable", available)
-                plugin.saveConfig()
-                if(available){
-                    sender.sendMessage("[$pluginTitle]を再開しました")
-                }
-                else{
-                    sender.sendMessage("[$pluginTitle]を停止しました")
-                }
+            "on"->{
+                available=true
+                plugin.config.set("available", available)
+                sender.sendMessage("[$pluginTitle]を再開しました")
+            }
+            "off"->{
+                available=false
+                plugin.config.set("available", available)
+                sender.sendMessage("[$pluginTitle]を停止しました")
             }
             "adminbox"->{
                 if(args.size==1){

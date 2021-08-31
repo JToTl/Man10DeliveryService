@@ -1,4 +1,4 @@
-name: ItemDelivery
+name: Man10DeliveryService
 version: @version@
 main: ltotj.minecraft.man10deliveryservice.Main
 api-version: 1.17

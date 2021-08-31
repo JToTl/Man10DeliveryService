@@ -19,12 +19,12 @@ letter:
 itemBox:
   cardboard:
     displayName: '§d段ボール箱'
-    material: 'DIAMOND_BLOCK'
+    material: 'IRON_NUGGET'
     customModelData: 0
     price: 0.0
   presentBox_red:
     displayName: '§dプレゼント箱赤'
-    material: 'GOLD_BLOCK'
+    material: 'IRON_NUGGET'
     customModelData: 0
     price: 10000.0
 
