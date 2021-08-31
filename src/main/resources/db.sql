@@ -36,3 +36,11 @@ create table player_status
 
     primary key(player_id)
 );
+
+create index delivery_order_sender_uuid_index on delivery_order(sender_uuid);
+
+create index delivery_order_receiver_uuid_index on delivery_order(receiver_uuid);
+
+create index player_status_owner_uuid_index on player_status(owner_uuid);
+
+create index player_status_owner_name_index on player_status(owner_name);
