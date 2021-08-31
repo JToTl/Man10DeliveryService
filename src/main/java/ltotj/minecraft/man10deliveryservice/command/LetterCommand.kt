@@ -18,15 +18,17 @@ object LetterCommand:CommandExecutor {
                 sender.sendMessage("§e/mletter 一行目 二行目 ...")
 
             }
-            else if(!sender.hasPermission("mdelivery.player")){
+            if(!sender.hasPermission("mdelivery.player")){
                 sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
                 return true
             }
-            else if(sender.inventory.itemInMainHand.type!=Material.AIR){
+            if(sender.inventory.itemInMainHand.type!=Material.AIR){
                 sender.sendMessage("§e手に何も持たないでもう一度実行してください")
+                return true
             }
-            else if(vault.getBalance(sender.uniqueId)<con.getDouble("letter.price")){
+            if(vault.getBalance(sender.uniqueId)<con.getDouble("letter.price")){
                 sender.sendMessage("§4お金が足りません！手紙を作るには§e${con.getDouble("letter.price")}円(電子マネー)§4が必要です")
+                return true
             }
             else {
                 vault.withdraw(sender,con.getDouble("letter.price"))

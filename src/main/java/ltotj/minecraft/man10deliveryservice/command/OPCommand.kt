@@ -14,15 +14,17 @@ import ltotj.minecraft.man10deliveryservice.Utility.countAirPocket
 import ltotj.minecraft.man10deliveryservice.Utility.createGUIItem
 import ltotj.minecraft.man10deliveryservice.Utility.getDateForMySQL
 import ltotj.minecraft.man10deliveryservice.Utility.setNBTInt
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-object OPCommand:CommandExecutor {
+object OPCommand:CommandExecutor,TabCompleter {
 
     private val mysql=MySQLManager(plugin, pluginTitle)
 
@@ -49,8 +51,10 @@ object OPCommand:CommandExecutor {
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if(sender !is Player)return true
-        else if(!sender.hasPermission("mdelivery.admin")){
+        if(sender !is Player){
+            return true
+        }
+        if(!sender.hasPermission("mdelivery.admin")){
             sender.sendMessage("§4権限なし")
             return true
         }
@@ -59,6 +63,19 @@ object OPCommand:CommandExecutor {
             return true
         }
         when(args[0]){
+            "help"->{
+                sender.sendMessage(arrayOf("§e/mdop banitem ->手に持ったアイテムを発送禁止リストに追加します §4※Material指定です"
+                        ,"§e/mdop unbanitem ->手に持ったアイテムを発送禁止リストから削除します §4※Material指定です"
+                        ,"§e/mdop on ->${pluginTitle}を利用可能にします","§e/mdop on ->${pluginTitle}を利用不可にします"
+                        ,"§e/mdop adminbox オーダーID ->指定されたオーダーIDのアドミン専用ボックスを取得します"
+                        ,"§e/mdop log <send,receive> <対象者> (ページ数) ->対象者の発送/受け取りログを表示します"
+                        ,"§e/mdop reload ->コンフィグをリロードします"))
+            }
+            "reload"->{
+                plugin.reloadConfig()
+                con= plugin.config
+                sender.sendMessage("[${pluginTitle}]コンフィグをリロードしました")
+            }
             "banitem"->{
                 if(sender.inventory.itemInMainHand.type!=Material.AIR) {
                     disableItems.add(sender.inventory.itemInMainHand.type.toString())
@@ -77,12 +94,16 @@ object OPCommand:CommandExecutor {
             }
             "on"->{
                 available=true
+                plugin.reloadConfig()
                 plugin.config.set("available", available)
+                plugin.saveConfig()
                 sender.sendMessage("[$pluginTitle]を再開しました")
             }
             "off"->{
                 available=false
+                plugin.reloadConfig()
                 plugin.config.set("available", available)
+                plugin.saveConfig()
                 sender.sendMessage("[$pluginTitle]を停止しました")
             }
             "adminbox"->{
@@ -281,5 +302,39 @@ object OPCommand:CommandExecutor {
 
         }
         return true
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): MutableList<String> {
+        if (alias == "mdop") {
+            when(args.size) {
+                1->{
+                    return mutableListOf("help","on","off","banitem","unbanitem","adminbox","log","reload")
+                }
+                2->{
+                    when(args[0]){
+                        "adminbox"->{
+                            return mutableListOf("オーダーID")
+                        }
+                        "log"->return mutableListOf("send","receive")
+                    }
+                }
+                3->{
+                    if(args[1]=="send"||args[1]=="receive"){
+                        val list= mutableListOf<String>()
+                        for (player in Bukkit.getOnlinePlayers()) {
+                            if (player.name == sender.name) continue
+                            list.add(player.name)
+                        }
+                        return list
+                    }
+                }
+                4->{
+                    if(args[1]=="send"||args[1]=="receive"){
+                        return mutableListOf("ページ数")
+                    }
+                }
+            }
+        }
+        return mutableListOf()
     }
 }

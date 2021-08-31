@@ -41,26 +41,34 @@ object SendCommand :CommandExecutor{
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(args.isEmpty()){
             sender.sendMessage("§d/mdsend 相手の名前 でアイテムを送ることができます！")
+            return true
         }
-        else if(!sender.hasPermission("mdelivery.player")){
+        if(!sender.hasPermission("mdelivery.player")){
             sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
             return true
         }
-        else if(!available){
+        if(!available){
             sender.sendMessage("§4[$pluginTitle]はただいま停止中です")
+            return true
         }
-        else if(sender !is Player)return true
-        else if(disableWorlds.contains(sender.world.name)){
+        if(sender !is Player) {
+            return true
+        }
+        if(disableWorlds.contains(sender.world.name)){
             sender.sendMessage("§4${sender.world.name}で[$pluginTitle]を使うことはできません")
+            return true
         }
-        else if(args.size>1&&args[1].length>50){
+        if(args.size>1&&args[1].length>50){
             sender.sendMessage("ボックス名が５０文字を超えています")
+            return true
         }
-        else if(args[0].equals(sender.name,true)){
+        if(args[0].equals(sender.name,true)){
             sender.sendMessage("§4自分自身に荷物を送ることはできません！")
+            return true
         }
-        else if(checkLastOrder(sender)){
+        if(checkLastOrder(sender)){
             sender.sendMessage("§4連続して荷物を送ることはできません！時間を置いてもう一度お試しください")
+            return true
         }
         else {
             executor.execute {
@@ -76,7 +84,7 @@ object SendCommand :CommandExecutor{
                 mysql.close()
                 Bukkit.getScheduler().runTask(plugin,Runnable{sender.openInventory(generateContainerSelectInv(args[0], if (args.size > 1) args[1] else "noName"))})
             }
+            return true
         }
-        return true
     }
 }

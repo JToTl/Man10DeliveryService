@@ -6,6 +6,7 @@ import ltotj.minecraft.man10deliveryservice.Main.Companion.disableItems
 import ltotj.minecraft.man10deliveryservice.Main.Companion.playerLastSendingData
 import ltotj.minecraft.man10deliveryservice.Main.Companion.plugin
 import ltotj.minecraft.man10deliveryservice.Main.Companion.pluginTitle
+import ltotj.minecraft.man10deliveryservice.Main.Companion.sendButtonName
 import ltotj.minecraft.man10deliveryservice.Main.Companion.vault
 import ltotj.minecraft.man10deliveryservice.MySQLManager
 import ltotj.minecraft.man10deliveryservice.Utility.countAirPocket
@@ -104,7 +105,7 @@ object DeliveryOrder: Listener {
         val receiver_name=getNBTString(keyItem, "receiver_name")
         val totalPrice=con.getDouble("itemBox.$wrapping.price")+con.getDouble("postage")
         val boxName=if (getNBTString(keyItem,"boxName")=="noName") con.getString("itemBox.$wrapping.displayName") else getNBTString(keyItem,"boxName")
-        val sendButton= createGUIItem(Material.FEATHER,1,"§f§lアイテムを送る", listOf("§dクリックでアイテムを送信します","§aラッピング：${wrapping}"
+        val sendButton= createGUIItem(Material.FEATHER,1, sendButtonName, listOf("§dクリックでアイテムを送信します","§aラッピング：${wrapping}"
                 ,"§aコンテナ名：$boxName"
                 ,"§e発送料金：§4${getYenString(totalPrice)}"))
         setNBTDouble(sendButton, "totalPrice", totalPrice)
@@ -253,7 +254,7 @@ object DeliveryOrder: Listener {
 
     @EventHandler
     fun containerCloseEvent(e: InventoryCloseEvent){
-        if(e.view.title()!= Component.text(Main.containerGUIName)||e.inventory.size!=9||e.inventory.getItem(8)?.itemMeta?.displayName()!=Component.text("§f§lアイテムを送る"))return
+        if(e.view.title()!= Component.text(Main.containerGUIName)||e.inventory.size!=9||e.inventory.getItem(8)?.itemMeta?.displayName()!=Component.text(sendButtonName))return
         returnItem(e.player as Player,e.inventory.contents)
     }
 

@@ -25,7 +25,7 @@ class Main : JavaPlugin(){
         var disableItems=ArrayList<String>()
         var boxOpeningList=ArrayList<UUID>()
         var available=true
-
+        var sendButtonName="§f§lアイテムを送る"
     }
 
 

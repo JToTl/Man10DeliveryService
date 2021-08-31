@@ -57,7 +57,7 @@ object ItemBox: Listener {
                 return@execute
             }
         }
-        else if(!Main.available){
+        if(!Main.available){
             e.player.sendMessage("§4[${Main.pluginTitle}]はただいま停止中です")
             return
         }

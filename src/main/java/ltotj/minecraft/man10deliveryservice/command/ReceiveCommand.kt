@@ -39,11 +39,11 @@ object ReceiveCommand :CommandExecutor {
             sender.sendMessage("§4${sender.world.name}で[${Main.pluginTitle}]を使うことはできません")
             return true
         }
-        else if(!sender.hasPermission("mdelivery.player")){
+        if(!sender.hasPermission("mdelivery.player")){
             sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
             return true
         }
-        else if(!Main.available){
+        if(!Main.available){
             sender.sendMessage("§4[${Main.pluginTitle}]はただいま停止中です")
             return true
         }
