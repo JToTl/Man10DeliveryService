@@ -74,11 +74,11 @@ object ItemBox: Listener {
                 }
                 else{
                     if(mysql.execute("update delivery_order set box_status=true,opener_name='${e.player.name}',opener_uuid='${e.player.uniqueId}',opened_date='${getDateForMySQL(Date())}' where order_id=$order_id;")) {
+                        e.player.inventory.remove(item)
                         for (i in 1..8) {
                             val boxedItem = itemFromBase64(result.getString("slot$i") ?: continue) ?: continue
                             e.player.inventory.addItem(boxedItem)
                         }
-                        e.player.inventory.remove(item)
                         e.player.playSound(e.player.location, Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F)
                         e.player.sendMessage("§aボックスを開封しました")
                         boxOpeningList.remove(e.player.uniqueId)
