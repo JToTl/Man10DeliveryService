@@ -40,7 +40,7 @@ class Main : JavaPlugin(){
         containerSelectGUIName="§d§lラッピングを選択してください"
         vault=VaultManager(this)
         disableWorlds=con.getStringList("disableWorlds")
-        available=con.getBoolean("enable")
+        available=con.getBoolean("available")
 
         for(str in con.getStringList("disableItems")){
             disableItems.add(str)
