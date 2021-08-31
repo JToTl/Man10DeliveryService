@@ -322,7 +322,6 @@ object OPCommand:CommandExecutor,TabCompleter {
                     if(args[1]=="send"||args[1]=="receive"){
                         val list= mutableListOf<String>()
                         for (player in Bukkit.getOnlinePlayers()) {
-                            if (player.name == sender.name) continue
                             list.add(player.name)
                         }
                         return list
