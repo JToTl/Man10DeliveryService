@@ -68,13 +68,12 @@ object ReceiveCommand :CommandExecutor {
             result.close()
             mysql.close()
             val amount = min(countAirPocket(sender.inventory), items.size)
-            Bukkit.getScheduler().runTask(plugin, Runnable {
-                for (i in 0 until amount) {
-                    sender.inventory.addItem(items.values.elementAt(i))
-                }
-            })
             for (i in 0 until amount) {
-                mysql.execute("update delivery_order set order_status=true,receive_date='${getDateForMySQL(Date())}' where order_id='${items.keys.elementAt(i)}';")
+                if(mysql.execute("update delivery_order set order_status=true,receive_date='${getDateForMySQL(Date())}' where order_id='${items.keys.elementAt(i)}';")){
+                    Bukkit.getScheduler().runTask(plugin, Runnable {
+                        sender.inventory.addItem(items.values.elementAt(i))
+                    })
+                }
             }
             mysql.execute("update player_status set delivery_amount=${items.size - amount} where owner_uuid='${sender.uniqueId}'")
             sender.playSound(sender.location, Sound.ENTITY_PLAYER_LEVELUP,1F,2F)
