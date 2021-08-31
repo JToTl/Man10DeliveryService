@@ -18,6 +18,7 @@ import ltotj.minecraft.man10deliveryservice.Utility.getNBTString
 import ltotj.minecraft.man10deliveryservice.Utility.getYenString
 import ltotj.minecraft.man10deliveryservice.Utility.setNBTDouble
 import ltotj.minecraft.man10deliveryservice.Utility.setNBTString
+import ltotj.minecraft.man10deliveryservice.command.LogCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -218,7 +219,11 @@ object DeliveryOrder: Listener {
     @EventHandler
     fun registerContainerUser(e: PlayerJoinEvent){
         Main.executor.execute {
-            val result=mysql.query("select delivery_amount from player_status where owner_uuid='${e.player.uniqueId}'")?: return@execute
+            val result=mysql.query("select delivery_amount from player_status where owner_uuid='${e.player.uniqueId}'")
+            if(result==null){
+                mysql.close()
+                return@execute
+            }
             result.next()
             if(result.row==0){
                 mysql.execute("insert into player_status(owner_name,owner_uuid) values('${e.player.name}','${e.player.uniqueId}');")

@@ -134,7 +134,11 @@ object OPCommand:CommandExecutor,TabCompleter {
                         "send" -> {
                             executor.execute {
                                 val uuidCount = mysql.query("select count(owner_uuid) from player_status where owner_name='${args[2]}';")
-                                        ?: return@execute
+                                if(uuidCount==null){
+                                    sender.sendMessage("データベース接続エラー")
+                                    mysql.close()
+                                    return@execute
+                                }
                                 uuidCount.next()
                                 if (uuidCount.row == 0) {
                                     uuidCount.close()
@@ -162,7 +166,11 @@ object OPCommand:CommandExecutor,TabCompleter {
                                 uuidCount.close()
                                 uuidResult.close()
                                 val result = mysql.query("select order_id,receiver_name,order_status,order_date from delivery_order where sender_uuid='$userUuid' order by order_id desc limit 11 offset ${(page - 1) * 10};")
-                                        ?: return@execute
+                                if(result==null){
+                                    sender.sendMessage("データベース接続エラー")
+                                    mysql.close()
+                                    return@execute
+                                }
                                 result.next()
                                 if (result.row == 0) {
                                     sender.sendMessage("§e送信ログが存在しません")
@@ -187,7 +195,12 @@ object OPCommand:CommandExecutor,TabCompleter {
                         }
                         "receive"->{
                             executor.execute {
-                                val uuidCount = mysql.query("select count(owner_uuid) from player_status where owner_name='${args[2]}';") ?: return@execute
+                                val uuidCount = mysql.query("select count(owner_uuid) from player_status where owner_name='${args[2]}';")
+                                if(uuidCount==null){
+                                    sender.sendMessage("データベース接続エラー")
+                                    mysql.close()
+                                    return@execute
+                                }
                                 uuidCount.next()
                                 if (uuidCount.row == 0) {
                                     uuidCount.close()
@@ -215,7 +228,11 @@ object OPCommand:CommandExecutor,TabCompleter {
                                 uuidCount.close()
                                 uuidResult.close()
                                 val result = mysql.query("select order_id,sender_name,order_status,receive_date from delivery_order where receiver_uuid='$userUuid' order by order_id desc limit 11 offset ${(page - 1) * 10};")
-                                        ?: return@execute
+                                if(result==null){
+                                    sender.sendMessage("データベース接続エラー")
+                                    mysql.close()
+                                    return@execute
+                                }
                                 result.next()
                                 if (result.row == 0) {
                                     sender.sendMessage("§e${10 * page}件以上のオーダーは存在しません")
@@ -248,7 +265,11 @@ object OPCommand:CommandExecutor,TabCompleter {
                         "send" -> {
                             executor.execute {
                                 val result = mysql.query("select order_id,receiver_name,order_status from delivery_order where sender_uuid='${args[2]}' order by order_id desc limit 11 offset ${(page - 1) * 10};")
-                                        ?: return@execute
+                                if(result==null){
+                                    sender.sendMessage("データベース接続エラー")
+                                    mysql.close()
+                                    return@execute
+                                }
                                 result.next()
                                 if (result.row == 0) {
                                     sender.sendMessage("§e送信ログが存在しません")

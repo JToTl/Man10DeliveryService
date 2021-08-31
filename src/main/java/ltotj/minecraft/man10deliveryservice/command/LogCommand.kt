@@ -54,7 +54,11 @@ object LogCommand:CommandExecutor,TabCompleter {
                 val page = if (args.size == 1) 1 else args[1].toIntOrNull() ?: 1
                 executor.execute {
                     val result = mysql.query("select order_id,receiver_name,order_status,order_date from delivery_order where sender_uuid='${sender.uniqueId}' order by order_id desc limit 11 offset ${(page - 1) * 10};")
-                            ?: return@execute
+                    if(result==null){
+                        sender.sendMessage("データベース接続エラー")
+                        mysql.close()
+                        return@execute
+                    }
                     result.next()
                     if (result.row == 0) {
                         sender.sendMessage("§e送信ログが存在しません")
@@ -81,7 +85,11 @@ object LogCommand:CommandExecutor,TabCompleter {
                 val page = if (args.size == 1) 1 else args[1].toIntOrNull() ?: 1
                 executor.execute {
                     val result = mysql.query("select order_id,sender_name,order_status,receive_date from delivery_order where receiver_uuid='${sender.uniqueId}' order by order_id desc limit 11 offset ${(page - 1) * 10};")
-                            ?: return@execute
+                    if(result==null){
+                        sender.sendMessage("データベース接続エラー")
+                        mysql.close()
+                        return@execute
+                    }
                     result.next()
                     if (result.row == 0) {
                         sender.sendMessage("§e${10 * page}件以上のオーダーは存在しません")

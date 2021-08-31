@@ -36,7 +36,12 @@ object ItemBox: Listener {
         }
         if(e.player.hasPermission("mdlivery.admin")&&getNBTInt(item,"admin_box")==1){
             executor.execute{
-                val result= mysql.query("select amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8 from delivery_order where order_id=$order_id;")?:return@execute
+                val result= mysql.query("select amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8 from delivery_order where order_id=$order_id;")
+                if(result==null){
+                    e.player.sendMessage("§4データーベース接続エラー")
+                    mysql.close()
+                    return@execute
+                }
                 result.next()
                 if(result.row==0){
                     e.player.sendMessage("§4アイテムボックスのデータが見つかりませんでした")
@@ -72,7 +77,12 @@ object ItemBox: Listener {
             if(boxOpeningList.contains(e.player.uniqueId))return
             boxOpeningList.add(e.player.uniqueId)
             executor.execute {
-                val result=mysql.query("select amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,box_status from delivery_order where order_id=$order_id;")?:return@execute
+                val result=mysql.query("select amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,box_status from delivery_order where order_id=$order_id;")
+                if(result==null){
+                    e.player.sendMessage("§4データベース接続エラー")
+                    mysql.close()
+                    return@execute
+                }
                 result.next()
                 if(result.row==0){
                     e.player.sendMessage("§4アイテムボックスが見つかりませんでした")
