@@ -9,6 +9,8 @@ import ltotj.minecraft.man10deliveryservice.Utility.countAirPocket
 import ltotj.minecraft.man10deliveryservice.Utility.getDateForMySQL
 import ltotj.minecraft.man10deliveryservice.Utility.getNBTInt
 import ltotj.minecraft.man10deliveryservice.Utility.itemFromBase64
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -72,8 +74,8 @@ object ItemBox: Listener {
                 else if(countAirPocket(e.player.inventory)<result.getInt("amount")){
                     e.player.sendMessage("§4インベントリがいっぱいです §d${countAirPocket(e.player.inventory)}個§4の空きを作って再度開けてください")
                 }
-                else{
-                    if(mysql.execute("update delivery_order set box_status=true,opener_name='${e.player.name}',opener_uuid='${e.player.uniqueId}',opened_date='${getDateForMySQL(Date())}' where order_id=$order_id;")) {
+                else if(Bukkit.getPlayer(e.player.uniqueId)!=null) {
+                    if (mysql.execute("update delivery_order set box_status=true,opener_name='${e.player.name}',opener_uuid='${e.player.uniqueId}',opened_date='${getDateForMySQL(Date())}' where order_id=$order_id;")) {
                         e.player.inventory.remove(item)
                         for (i in 1..8) {
                             val boxedItem = itemFromBase64(result.getString("slot$i") ?: continue) ?: continue
@@ -82,11 +84,12 @@ object ItemBox: Listener {
                         e.player.playSound(e.player.location, Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F)
                         e.player.sendMessage("§aボックスを開封しました")
                         boxOpeningList.remove(e.player.uniqueId)
-                    }
-                    else{
+                    } else {
                         e.player.sendMessage("§4ボックスを開封できませんでした")
                     }
                 }
+                result.close()
+                mysql.close()
                 boxOpeningList.remove(e.player.uniqueId)
             }
         }

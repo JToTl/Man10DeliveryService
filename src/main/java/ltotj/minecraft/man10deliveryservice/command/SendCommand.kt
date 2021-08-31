@@ -13,6 +13,7 @@ import ltotj.minecraft.man10deliveryservice.Utility
 import ltotj.minecraft.man10deliveryservice.Utility.getDateForMySQL
 import ltotj.minecraft.man10deliveryservice.order.DeliveryOrder
 import ltotj.minecraft.man10deliveryservice.order.DeliveryOrder.generateContainerSelectInv
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -51,9 +52,9 @@ object SendCommand :CommandExecutor{
         else if(args.size>1&&args[1].length>50){
             sender.sendMessage("ボックス名が５０文字を超えています")
         }
-        else if(args[0].equals(sender.name,true)){
-            sender.sendMessage("§4自分自身に荷物を送ることはできません！")
-        }
+//        else if(args[0].equals(sender.name,true)){
+//            sender.sendMessage("§4自分自身に荷物を送ることはできません！")
+//        }
         else if(checkLastOrder(sender)){
             sender.sendMessage("§4連続して荷物を送ることはできません！時間を置いてもう一度お試しください")
         }
