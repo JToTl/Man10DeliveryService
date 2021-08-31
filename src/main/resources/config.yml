@@ -1,0 +1,38 @@
+mysql:
+  host: 'localhost'
+  user: 'minecraft'
+  pass: 'JToTl'
+  port: 3306
+  db: 'itemdelivery_data'
+
+postage: 500.0
+
+sendInterval: 20
+
+available: true
+
+letter:
+  material: 'PAPER'
+  customModelData: 0
+  price: 10.0
+
+itemBox:
+  cardboard:
+    displayName: '§d段ボール箱'
+    material: 'DIAMOND_BLOCK'
+    customModelData: 0
+    price: 0.0
+  presentBox_red:
+    displayName: '§dプレゼント箱赤'
+    material: 'GOLD_BLOCK'
+    customModelData: 0
+    price: 10000.0
+
+
+disableWorlds:
+  - 'sample_world'
+
+disableItems:
+  - 'sample_material'
+
+

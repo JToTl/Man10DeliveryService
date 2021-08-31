@@ -1,0 +1,22 @@
+name: ItemDelivery
+version: @version@
+main: ltotj.minecraft.man10deliveryservice.Main
+api-version: 1.17
+depend: [Vault]
+commands:
+  mdrec:
+    usage: ""
+  mdsend:
+    usuage: "§d/mdsend <送りたい人> (ボックスの名前)"
+  mdlog:
+    usuage: ""
+  mletter:
+    usuage: ""
+  mdop:
+    usuage: ""
+
+permissions:
+  mdelivery.admin:
+      default: op
+  mdelivery.player:
+      default: true
