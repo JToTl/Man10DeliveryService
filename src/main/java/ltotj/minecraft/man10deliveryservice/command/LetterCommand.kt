@@ -18,6 +18,10 @@ object LetterCommand:CommandExecutor {
                 sender.sendMessage("§e/mletter 一行目 二行目 ...")
 
             }
+            else if(!sender.hasPermission("mdelivery.player")){
+                sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
+                return true
+            }
             else if(sender.inventory.itemInMainHand.type!=Material.AIR){
                 sender.sendMessage("§e手に何も持たないでもう一度実行してください")
             }

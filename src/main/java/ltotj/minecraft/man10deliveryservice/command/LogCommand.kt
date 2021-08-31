@@ -39,6 +39,10 @@ object LogCommand:CommandExecutor,TabCompleter {
             return true
         }
         else if (sender !is Player) return true
+        else if(!sender.hasPermission("mdelivery.player")){
+            sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
+            return true
+        }
         else if(!Main.available){
             sender.sendMessage("§4[$pluginTitle]はただいま停止中です")
             return true

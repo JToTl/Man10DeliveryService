@@ -30,6 +30,10 @@ object ItemBox: Listener {
         if(order_id==-1)return
         e.isCancelled=true
         if(e.hand==null||(e.hand!=null&&e.hand!=EquipmentSlot.HAND))return
+        if(!e.player.hasPermission("mdelivery.player")){
+            e.player.sendMessage("§4権限なし")
+            return
+        }
         if(e.player.hasPermission("mdlivery.admin")&&getNBTInt(item,"admin_box")==1){
             executor.execute{
                 val result= mysql.query("select amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8 from delivery_order where order_id=$order_id;")?:return@execute

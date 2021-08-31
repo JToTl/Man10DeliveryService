@@ -42,6 +42,10 @@ object SendCommand :CommandExecutor{
         if(args.isEmpty()){
             sender.sendMessage("§d/mdsend 相手の名前 でアイテムを送ることができます！")
         }
+        else if(!sender.hasPermission("mdelivery.player")){
+            sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
+            return true
+        }
         else if(!available){
             sender.sendMessage("§4[$pluginTitle]はただいま停止中です")
         }
@@ -52,9 +56,9 @@ object SendCommand :CommandExecutor{
         else if(args.size>1&&args[1].length>50){
             sender.sendMessage("ボックス名が５０文字を超えています")
         }
-//        else if(args[0].equals(sender.name,true)){
-//            sender.sendMessage("§4自分自身に荷物を送ることはできません！")
-//        }
+        else if(args[0].equals(sender.name,true)){
+            sender.sendMessage("§4自分自身に荷物を送ることはできません！")
+        }
         else if(checkLastOrder(sender)){
             sender.sendMessage("§4連続して荷物を送ることはできません！時間を置いてもう一度お試しください")
         }
