@@ -91,15 +91,18 @@ object Utility {
     }
 
     fun getNBTInt(item:ItemStack,namespacedKey:String):Int{
-        return item.itemMeta.persistentDataContainer[NamespacedKey(plugin,namespacedKey), PersistentDataType.INTEGER]?:-1
+        val meta=item.itemMeta?:return -1
+        return meta.persistentDataContainer[NamespacedKey(plugin,namespacedKey), PersistentDataType.INTEGER]?:-1
     }
 
     fun getNBTString(item:ItemStack,namespacedKey:String):String{
-        return item.itemMeta.persistentDataContainer[NamespacedKey(plugin,namespacedKey), PersistentDataType.STRING]?:""
+        val meta=item.itemMeta?:return ""
+        return meta.persistentDataContainer[NamespacedKey(plugin,namespacedKey), PersistentDataType.STRING]?:""
     }
 
     fun getNBTDouble(item:ItemStack,namespacedKey: String):Double{
-        return item.itemMeta.persistentDataContainer[NamespacedKey(plugin,namespacedKey), PersistentDataType.DOUBLE]?:0.0
+        val meta=item.itemMeta?:return 0.0
+        return meta.persistentDataContainer[NamespacedKey(plugin,namespacedKey), PersistentDataType.DOUBLE]?:0.0
     }
 
     fun createGUIItem(material: Material, amount: Int, name: String, lore: List<String>):ItemStack{
