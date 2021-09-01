@@ -66,7 +66,7 @@ object SendCommand :CommandExecutor{
             sender.sendMessage("§4自分自身に荷物を送ることはできません！")
             return true
         }
-        if(checkLastOrder(sender)){
+        if(checkLastOrder(sender)&&!sender.hasPermission("mdelivery.admin")){
             sender.sendMessage("§4連続して荷物を送ることはできません！時間を置いてもう一度お試しください")
             return true
         }
