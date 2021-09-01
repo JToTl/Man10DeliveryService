@@ -16,7 +16,7 @@ object LetterCommand:CommandExecutor {
         if (sender is Player) {
             if (args.isEmpty()) {
                 sender.sendMessage("§e/mletter 一行目 二行目 ...")
-
+                return true
             }
             if(!sender.hasPermission("mdelivery.player")){
                 sender.sendMessage("§4あなたはこのコマンドを実行する権限を持っていません！")
