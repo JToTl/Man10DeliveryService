@@ -77,7 +77,7 @@ object ItemBox: Listener {
             if(boxOpeningList.contains(e.player.uniqueId))return
             boxOpeningList.add(e.player.uniqueId)
             executor.execute {
-                val result=mysql.query("select amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,box_status from delivery_order where order_id=$order_id;")
+                val result=mysql.query("select sender_uuid,amount,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,box_status from delivery_order where order_id=$order_id;")
                 if(result==null){
                     e.player.sendMessage("§4データベース接続エラー")
                     mysql.close()
@@ -117,6 +117,7 @@ object ItemBox: Listener {
                         e.player.playSound(e.player.location, Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F)
                         e.player.sendMessage("§aボックスを開封しました")
                         boxOpeningList.remove(e.player.uniqueId)
+                        Bukkit.getPlayer(UUID.fromString(result.getString("sender_uuid")))?.sendMessage("§e§l${e.player.name}があなたの送ったボックスを開封しました！")
                     } else {
                         e.player.sendMessage("§4ボックスを開封できませんでした")
                     }
