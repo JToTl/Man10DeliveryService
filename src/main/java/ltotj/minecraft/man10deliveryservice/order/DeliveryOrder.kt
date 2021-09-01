@@ -37,6 +37,7 @@ import org.bukkit.util.io.BukkitObjectOutputStream
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder
 import java.io.ByteArrayOutputStream
 import java.lang.Integer.min
+import java.lang.Thread.sleep
 import java.util.*
 
 object DeliveryOrder: Listener {
@@ -227,14 +228,11 @@ object DeliveryOrder: Listener {
             result.next()
             if(result.row==0){
                 mysql.execute("insert into player_status(owner_name,owner_uuid) values('${e.player.name}','${e.player.uniqueId}');")
+                result.close()
+                mysql.close()
+                return@execute
             }
-            else{
-                val amount=result.getInt("delivery_amount")
-                if(amount>0){
-                    e.player.sendMessage("§a§lあなたに§d${amount}個§a§lのお届け物があります！")
-                    e.player.sendMessage(createClickEventText_run("§eここを§lクリック§r§eで受け取りましょう！","/mdrec"))
-                }
-            }
+            val amount=result.getInt("delivery_amount")
             result.close()
             val dateResult= mysql.query("select order_date from delivery_order where sender_uuid='${e.player.uniqueId}' order by order_date desc limit 1;")
             if(dateResult==null){
@@ -249,6 +247,11 @@ object DeliveryOrder: Listener {
             }
             dateResult.close()
             mysql.close()
+            sleep(3000)
+            if(amount>0) {
+                e.player.sendMessage("§a§lあなたに§d${amount}個§a§lのお届け物があります！")
+                e.player.sendMessage(createClickEventText_run("§eここを§lクリック§r§eで受け取りましょう！", "/mdrec"))
+            }
         }
     }
 
