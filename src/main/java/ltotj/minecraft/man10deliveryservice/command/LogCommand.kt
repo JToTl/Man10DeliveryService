@@ -118,7 +118,7 @@ object LogCommand:CommandExecutor,TabCompleter {
                     sender.sendMessage("§4IDは1以上の数字を指定してください")
                 } else {
                     executor.execute {
-                        val result = mysql.query("select sender_uuid,receiver_uuid,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8 from delivery_order where order_id=$order_id;")
+                        val result = mysql.query("select sender_uuid,receiver_uuid,slot1,slot2,slot3,slot4,slot5,slot6,slot7,slot8,box_status,opener_name from delivery_order where order_id=$order_id;")
                         if (result == null) {
                             sender.sendMessage("§4データベース接続エラー")
                             mysql.close()
@@ -129,6 +129,7 @@ object LogCommand:CommandExecutor,TabCompleter {
                                 sender.sendMessage("§4このボックスのログを確認する権限がありません")
                             } else {
                                 sender.sendMessage("§aオーダーID：${order_id}のアイテムを検索中・・・")
+                                sender.sendMessage(if(result.getBoolean("box_status")) "§e開封者:${result.getString("opener_name")}" else "§eボックス未開封")
                                 for (i in 1..8) {
                                     val item = itemFromBase64(result.getString("slot$i") ?: continue) ?: continue
                                     sender.sendMessage(text("§e§l[スロット$i]：${item.amount}個").hoverEvent(item.asHoverEvent()))
