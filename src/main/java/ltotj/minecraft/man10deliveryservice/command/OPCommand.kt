@@ -114,18 +114,21 @@ object OPCommand:CommandExecutor,TabCompleter {
                 val id=args[1].toIntOrNull()
                 if(id==null||id<=0){
                     sender.sendMessage("オーダーIDは１以上の整数を指定してください")
+                    return true
                 }
-                else if(countAirPocket(sender.inventory)==0){
+                if(countAirPocket(sender.inventory)==0){
                     sender.sendMessage("インベントリ空きがありません")
+                    return true
                 }
                 else {
                     executor.execute {
                         sender.inventory.addItem(getAdminItemBox(id))
                     }
+                    return true
                 }
             }
             "log"->{
-                if(args.size<2){
+                if(args.size<3){
                     sender.sendMessage("/mdop log <send,receive> <名前> (ページ数)")
                 }
                 else {
@@ -148,8 +151,8 @@ object OPCommand:CommandExecutor,TabCompleter {
                                 }
                                 val uuidResult= mysql.query("select owner_uuid from player_status where owner_name='${args[2]}';")!!
                                 if (uuidCount.getInt("count(owner_uuid)")!=1){
-                                    sender.sendMessage("${args[2]}という名前で登録されているユーザーは複数名存在します")
-                                    sender.sendMessage("/mdop loguuid <sender,receive,box> <uuid> で再度検索してください")
+                                    sender.sendMessage("${args[2]}という名前で登録されているユーザーは複数名存在するか、名前が間違っています")
+                                    sender.sendMessage("複数名存在する場合は/mdop loguuid <sender,receive,box> <uuid> で再度検索してください")
                                     sender.sendMessage("ユーザー1,uuid:${uuidResult.getString("owner_uuid")}")
                                     var count = 0
                                     while (uuidResult.next()) {
@@ -165,7 +168,7 @@ object OPCommand:CommandExecutor,TabCompleter {
                                 val userUuid = uuidResult.getString("owner_uuid")
                                 uuidCount.close()
                                 uuidResult.close()
-                                val result = mysql.query("select order_id,receiver_name,order_status,order_date from delivery_order where sender_uuid='$userUuid' order by order_id desc limit 11 offset ${(page - 1) * 10};")
+                                val result = mysql.query("select order_id,receiver_name,order_status,order_date,box_status,opener_name from delivery_order where sender_uuid='$userUuid' order by order_id desc limit 11 offset ${(page - 1) * 10};")
                                 if(result==null){
                                     sender.sendMessage("データベース接続エラー")
                                     mysql.close()
@@ -176,11 +179,11 @@ object OPCommand:CommandExecutor,TabCompleter {
                                     sender.sendMessage("§e送信ログが存在しません")
                                 } else {
                                     sender.sendMessage(Utility.createClickEventText_run("§9オーダーID:${result.getInt("order_id")},発送日時:${result.getString("order_date")}, 発送先:${result.getString("receiver_name")} " +
-                                            ",受け取り状況：${if (result.getBoolean("order_status")) "§d受け取り済み" else "§4未受け取り"} ,§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
+                                            ",受け取り状況：${if (result.getBoolean("order_status")) "§d受け取り済み" else "§4未受け取り"},${if(result.getBoolean("box_status"))"開封者:${result.getString("opener_name")}" else "§4未開封"},§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
                                     var count = 0
                                     while (count < 9 && result.next()) {
                                         sender.sendMessage(Utility.createClickEventText_run("§9オーダーID:${result.getInt("order_id")},発送日時:${result.getString("order_date")}, 発送先:${result.getString("receiver_name")} " +
-                                                ",受け取り状況：${if (result.getBoolean("order_status")) "§d受け取り済み" else "§4未受け取り"} ,§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
+                                                ",受け取り状況：${if (result.getBoolean("order_status")) "§d受け取り済み" else "§4未受け取り"},${if(result.getBoolean("box_status"))"開封者:${result.getString("opener_name")}" else "§4未開封"},§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
                                         count++
                                     }
                                     if (result.next()) {
@@ -210,8 +213,8 @@ object OPCommand:CommandExecutor,TabCompleter {
                                 }
                                 val uuidResult = mysql.query("select owner_uuid from player_status where owner_name='${args[2]}';")!!
                                 if (uuidCount.getInt("count(owner_uuid)")!=1) {
-                                    sender.sendMessage("${args[2]}という名前で登録されているユーザーは複数名存在します")
-                                    sender.sendMessage("/mdop loguuid <sender,receive,box> <uuid> で再度検索してください")
+                                    sender.sendMessage("${args[2]}という名前で登録されているユーザーは複数名存在するか、名前が間違っています")
+                                    sender.sendMessage("複数名存在する場合は/mdop loguuid <sender,receive,box> <uuid> で再度検索してください")
                                     sender.sendMessage("ユーザー1,uuid:${uuidResult.getString("owner_uuid")}")
                                     var count = 0
                                     while (uuidResult.next()) {
@@ -227,7 +230,7 @@ object OPCommand:CommandExecutor,TabCompleter {
                                 val userUuid = uuidResult.getString("owner_uuid")
                                 uuidCount.close()
                                 uuidResult.close()
-                                val result = mysql.query("select order_id,sender_name,order_status,receive_date from delivery_order where receiver_uuid='$userUuid' order by order_id desc limit 11 offset ${(page - 1) * 10};")
+                                val result = mysql.query("select order_id,sender_name,order_status,receive_date,box_status,opener_name from delivery_order where receiver_uuid='$userUuid' order by order_id desc limit 11 offset ${(page - 1) * 10};")
                                 if(result==null){
                                     sender.sendMessage("データベース接続エラー")
                                     mysql.close()
@@ -238,11 +241,11 @@ object OPCommand:CommandExecutor,TabCompleter {
                                     sender.sendMessage("§e${10 * page}件以上のオーダーは存在しません")
                                 } else {
                                     sender.sendMessage(Utility.createClickEventText_run("§9ID:${result.getInt("order_id")},受取日時:${result.getString("receive_date")},発送元:${result.getString("sender_name")}" +
-                                            ",受け取り状況：${if(result.getBoolean("order_status"))"§d受け取り済" else "§4未受け取り"},§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
+                                            ",受け取り状況：${if(result.getBoolean("order_status"))"§d受け取り済" else "§4未受け取り"},${if(result.getBoolean("box_status"))"開封者:${result.getString("opener_name")}" else "§4未開封"},§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
                                     var count = 0
                                     while (count < 9 && result.next()) {
                                         sender.sendMessage(Utility.createClickEventText_run("§9ID:${result.getInt("order_id")},受取日時:${result.getString("receive_date")},発送元:${result.getString("sender_name")}" +
-                                                ",受け取り状況：${if(result.getBoolean("order_status"))"§d受け取り済" else "§4未受け取り"},§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
+                                                ",受け取り状況：${if(result.getBoolean("order_status"))"§d受け取り済" else "§4未受け取り"},${if(result.getBoolean("box_status"))"開封者:${result.getString("opener_name")}" else "§4未開封"},§e[クリックでAdminBoxを取得]", "/mdop adminbox ${result.getInt("order_id")}"))
                                         count++
                                     }
                                     if (result.next()) {

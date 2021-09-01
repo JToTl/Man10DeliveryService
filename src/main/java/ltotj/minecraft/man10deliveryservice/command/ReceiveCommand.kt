@@ -50,7 +50,7 @@ object ReceiveCommand :CommandExecutor {
         val uuid = sender.uniqueId
         executor.execute {
             sender.sendMessage("§4§lお届け物を受け取っています・・・インベントリの操作をせずにお待ちください")
-            val result = mysql.query("select order_id,sender_name,wrapping,boxName,order_date from delivery_order where receiver_uuid='$uuid' and order_status=false;")
+            val result = mysql.query("select order_id,sender_name,sender_uuid,wrapping,boxName,order_date from delivery_order where receiver_uuid='$uuid' and order_status=false;")
             if (result == null) {
                 println("[itemDelivery]データベース接続エラー")
                 mysql.close()
