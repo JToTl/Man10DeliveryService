@@ -38,6 +38,19 @@ object SendCommand :CommandExecutor{
         return lastTime.substring(0,10)==newTime.substring(0,10)&&abs(getTimeFromDateTime(lastTime)- getTimeFromDateTime(newTime))<con.getInt("sendInterval")
     }
 
+    //エスケープ
+    private fun escapeStringForMySQL(s: String): String {
+        return s.replace("\\", "\\\\")
+                .replace("\b", "\\b")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t")
+                .replace("\\x1A", "\\Z")
+                .replace("\\x00", "\\0")
+                .replace("'", "\\'")
+                .replace("\"", "\\\"")
+    }
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(args.isEmpty()){
             sender.sendMessage("§d/mdsend 相手の名前 でアイテムを送ることができます！")
@@ -72,7 +85,7 @@ object SendCommand :CommandExecutor{
         }
         else {
             executor.execute {
-                val result= mysql.query("select owner_uuid,delivery_amount from player_status where owner_name='${args[0]}';")?:return@execute
+                val result= mysql.query("select owner_uuid,delivery_amount from player_status where owner_name='${escapeStringForMySQL(args[0])}';")?:return@execute
                 result.next()
                 if(result.row==0){
                     sender.sendMessage("${args[0]}は見つかりませんでした")
@@ -82,7 +95,7 @@ object SendCommand :CommandExecutor{
                 }
                 result.close()
                 mysql.close()
-                Bukkit.getScheduler().runTask(plugin,Runnable{sender.openInventory(generateContainerSelectInv(args[0], if (args.size > 1) args[1] else "noName"))})
+                Bukkit.getScheduler().runTask(plugin,Runnable{sender.openInventory(generateContainerSelectInv(args[0], if (args.size > 1) escapeStringForMySQL(args[1])else "noName"))})
             }
             return true
         }
