@@ -163,7 +163,14 @@ object DeliveryOrder: Listener {
                     })
                     return@execute
                 }
-                result.next()
+                if(!result.next()){
+                    result.close()
+                    mysql.close()
+                    Bukkit.getScheduler().runTask(plugin,Runnable {
+                        returnItem(e.whoClicked as Player,container)
+                    })
+                    return@execute
+                }
                 val sender_name=e.whoClicked.name
                 val sender_uuid=e.whoClicked.uniqueId
                 val date= Date()
