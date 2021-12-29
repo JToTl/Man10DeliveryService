@@ -85,16 +85,11 @@ object SendCommand :CommandExecutor{
         }
         else {
             executor.execute {
-                val result= mysql.query("select owner_uuid,delivery_amount from player_status where owner_name='${escapeStringForMySQL(args[0])}';")?:return@execute
-                result.next()
-                if(result.row==0){
+                val offlinePlayer=Bukkit.getOfflinePlayer(args[0])
+                if(offlinePlayer.name==null){
                     sender.sendMessage("${args[0]}は見つかりませんでした")
-                    result.close()
-                    mysql.close()
                     return@execute
                 }
-                result.close()
-                mysql.close()
                 Bukkit.getScheduler().runTask(plugin,Runnable{sender.openInventory(generateContainerSelectInv(args[0], if (args.size > 1) escapeStringForMySQL(args[1])else "noName"))})
             }
             return true

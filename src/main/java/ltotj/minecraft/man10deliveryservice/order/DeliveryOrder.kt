@@ -153,7 +153,9 @@ object DeliveryOrder: Listener {
             e.clickedInventory?.clear()
             e.whoClicked.closeInventory()
             Main.executor.execute {
-                val result= mysql.query("select owner_uuid,delivery_amount from player_status where owner_name='${getNBTString(keyItem,"receiver_name")}';")
+                val receiver_name=getNBTString(keyItem,"receiver_name")
+                val receiver_uuid=Bukkit.getOfflinePlayer(receiver_name).uniqueId.toString()
+                val result= mysql.query("select owner_uuid,delivery_amount from player_status where owner_uuid='${receiver_uuid}';")
                 if(result==null){
                     mysql.close()
                     Bukkit.getScheduler().runTask(plugin,Runnable {
@@ -164,8 +166,6 @@ object DeliveryOrder: Listener {
                 result.next()
                 val sender_name=e.whoClicked.name
                 val sender_uuid=e.whoClicked.uniqueId
-                val receiver_name=getNBTString(keyItem,"receiver_name")
-                val receiver_uuid=result.getString("owner_uuid")
                 val date= Date()
                 val wrapping=getNBTString(keyItem,"wrapping")
                 val boxName= getNBTString(keyItem,"boxName")
@@ -243,7 +243,7 @@ object DeliveryOrder: Listener {
             }
             dateResult?.close()
             mysql.close()
-            sleep(3000)
+            sleep(6000)
             if(amount>0) {
                 e.player.sendMessage("§a§lあなたに§d${amount}個§a§lのお届け物があります！")
                 e.player.sendMessage(createClickEventText_run("§eここを§lクリック§r§eで受け取りましょう！", "/mdrec"))
